@@ -31,5 +31,6 @@ pipeline {
         }
         failure {
             githubNotify context: 'Jenkins', description: 'Build failed', status: 'FAILURE'
+        }
     }
 }
