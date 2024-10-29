@@ -25,4 +25,11 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            githubNotify context: 'Jenkins', description: 'Build successful', status: 'SUCCESS'
+        }
+        failure {
+            githubNotify context: 'Jenkins', description: 'Build failed', status: 'FAILURE'
+    }
 }
