@@ -18,16 +18,9 @@ pipeline {
             }
         }
 
-        stage('Install deps') {
-            steps {
-                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
-                sh 'export "PATH=$PATH:/var/jenkins_home/workspace/play-jenkins/go/bin/golangci-lint"'
-                sh 'golangci-lint run'
-            }
-        }
-
         stage('Build') {
             steps{
+                sh 'go mod tidy'
                 sh 'go run .'
             }
         }
