@@ -1,6 +1,6 @@
 package calc
 
-func Mulnum ...int) int {
+func Mul(num ...int) int {
 	if len(num) == 0 {
 		return 0
 	}
