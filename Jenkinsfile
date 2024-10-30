@@ -34,6 +34,7 @@ pipeline {
         GITHUB_REPO = 'DucTran999/play-jenkins'
         GITHUB_TOKEN_CREDENTIALS = credentials('playjenkins')
         COMMIT_MESSAGE = sh(script: "git log --format=%B -n 1", returnStdout: true).trim()
+        COMMIT_HASH = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
     }
 
     stages {
@@ -49,7 +50,7 @@ pipeline {
                 script {
                     echo COMMIT_MESSAGE
                     def response = httpRequest(
-                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses",
+                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}",
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: """{
