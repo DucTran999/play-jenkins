@@ -57,7 +57,8 @@ pipeline {
                         --data '{
                             "state": "success",
                             "context": "continuous-integration/jenkins"
-                        }'
+                        }'\
+                        --silent --output /dev/null --write-out "%{http_code}"
                     '''
 
                     // if (response.status != 200) {
