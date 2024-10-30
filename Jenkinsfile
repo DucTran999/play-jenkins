@@ -29,6 +29,8 @@ pipeline {
         COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
         COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         GITHUB_TOKEN = credentials('playjenkins')
+        GOPATH = "${env.WORKSPACE}/go"
+        PATH = "${GOPATH}/bin:${env.PATH}" 
     }
 
     parameters {
@@ -38,16 +40,16 @@ pipeline {
     }
 
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         // Checkout the source code from the repository
-        //         git url: 'https://github.com/your/repo.git', branch: 'main'
-        //     }
-        // }
         stage('Install golangci-lint') {
             steps {
-                // Install golangci-lint if not already installed
-                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0'
+                script {
+                    sh '''
+                    # Ensure the GOPATH/bin directory exists
+                    mkdir -p ${GOPATH}/bin
+                    # Install golangci-lint
+                    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOPATH}/bin v1.50.0
+                    '''
+                }
             }
         }
         stage('Check lint') {
