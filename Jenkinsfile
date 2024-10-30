@@ -51,10 +51,26 @@ pipeline {
 
     post {
         success {
-            echo 'Build Successful'
+            script {
+                echo "Sending 'success' status to GitHub"
+                def response = httpRequest(
+                    url: "https://api.github.com/repos/DucTran999/play-jenkins/project/statuses/${params.commit_sha}",
+                    httpMode: 'POST',
+                    contentType: 'APPLICATION_JSON',
+                    requestBody: """{
+                        "state": "success",
+                        "description": "Build passed",
+                        "context": "ci/jenkins-pipeline",
+                        "target_url": "${env.BUILD_URL}"
+                    }""",
+                    authentication: 'github-token'
+                )
+                echo "GitHub Response: ${response.status}"
+            }
         }
-        failure {
-            echo 'Build Failed'
+
+        always {
+            echo "Pipeline finished. Commit SHA: ${params.commit_sha}"
         }
     }
 }
