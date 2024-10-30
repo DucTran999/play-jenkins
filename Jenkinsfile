@@ -48,7 +48,7 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    def statusCode = updateGitHubStatus(env.COMMIT_HASH, env.GITHUB_TOKEN)
+                    def statusCode = updateGitHubStatus()
                     if (statusCode != '201') {
                         error "Failed to update GitHub status: HTTP ${statusCode}"
                     } else {
@@ -60,11 +60,11 @@ pipeline {
     }
 }
 
-def updateGitHubStatus(commitHash, githubToken) {
-    return sh(script: '''
-        curl --location "https://api.github.com/${GITHUB_REPO}/play-jenkins/statuses/${commitHash}" \
+def updateGitHubStatus() {
+    return sh(script: """
+        curl --location 'https://api.github.com/${GITHUB_REPO}/play-jenkins/statuses/${COMMIT_HASH}' \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${githubToken}" \
+            -H 'Authorization: Bearer ${GITHUB_TOKEN}' \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -H "Content-Type: application/json" \
             --data '{
@@ -72,5 +72,5 @@ def updateGitHubStatus(commitHash, githubToken) {
                 "context": "continuous-integration/jenkins"
             }' \
             --silent --output /dev/null --write-out "%{http_code}"
-    ''', returnStdout: true).trim()
+    """, returnStdout: true).trim()
 }
