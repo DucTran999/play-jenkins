@@ -48,15 +48,17 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    curl --location 'https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}' \
-                    --header 'Accept: application/vnd.github+json' \
-                    --header 'Authorization: Bearer ${GITHUB_TOKEN}' \
-                    --header 'X-GitHub-Api-Version: 2022-11-28' \
-                    --header 'Content-Type: application/json' \
-                    --data '{
-                        "state": "success",
-                        "context": "continuous-integration/jenkins"
-                    }'
+                    def response = sh(script: '''
+                        curl --location --silent --write-out '%{http_code}' --output /dev/null 'https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}' \
+                        --header 'Accept: application/vnd.github+json' \
+                        --header 'Authorization: Bearer ${GITHUB_TOKEN}' \
+                        --header 'X-GitHub-Api-Version: 2022-11-28' \
+                        --header 'Content-Type: application/json' \
+                        --data '{
+                            "state": "success",
+                            "context": "continuous-integration/jenkins"
+                        }'
+                    ''', returnStdout: true).trim()
 
                     if (response.status != 200) {
                         error "Failed to update GitHub status: ${response.status} - ${response.content}"
