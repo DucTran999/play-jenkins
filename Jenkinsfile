@@ -34,9 +34,7 @@ pipeline {
             steps {
                 script {
                     githubCheckStatus(status: 'IN_PROGRESS', message: 'Build started')
-                    // Simulate build step (replace with actual build commands)
-                    echo 'Building...'
-                    // Mark as success upon completion
+                    echo 'Building...' // Replace with actual build commands
                     githubCheckStatus(status: 'SUCCESS', message: 'Build successful')
                 }
             }
@@ -45,22 +43,18 @@ pipeline {
             steps {
                 script {
                     githubCheckStatus(status: 'IN_PROGRESS', message: 'Testing started')
-                    // Simulate test step (replace with actual test commands)
-                    echo 'Testing...'
-                    // Mark as success upon completion
+                    echo 'Testing...' // Replace with actual test commands
                     githubCheckStatus(status: 'SUCCESS', message: 'Tests passed')
                 }
             }
         }
     }
     post {
-        always {
-            // Final status update depending on build result
-            if (currentBuild.result == 'SUCCESS') {
-                githubCheckStatus(status: 'SUCCESS', message: 'Pipeline completed successfully')
-            } else {
-                githubCheckStatus(status: 'FAILURE', message: 'Pipeline failed')
-            }
+        success {
+            githubCheckStatus(status: 'SUCCESS', message: 'Pipeline completed successfully')
+        }
+        failure {
+            githubCheckStatus(status: 'FAILURE', message: 'Pipeline failed')
         }
     }
 }
