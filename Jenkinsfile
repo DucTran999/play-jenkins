@@ -40,7 +40,7 @@ pipeline {
     stages {
         stage('Lint') {
             steps {
-                updateGitHubStatus("success", "continuous-integration/jenkins")
+                updateGitHubStatus('success', 'continuous-integration/jenkins')
                 echo 'Golangci-lint running...'
                 // Your build steps here
 
