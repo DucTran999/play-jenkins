@@ -44,14 +44,14 @@ pipeline {
                 script{
                     def pending = 'success'
                     def context = 'continuous-integration/jenkins...'
-                    updateGitHubStatus(pending, context)
+                    updateGitHubStatus()
                 }
             }
         }
     }
 }
 
-def updateGitHubStatus(String status,String context) {
+def updateGitHubStatus() {
     def curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
@@ -59,8 +59,8 @@ def updateGitHubStatus(String status,String context) {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": 'success',
-            "context": 'ok'
+            "state": "success",
+            "context": "ok"
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
