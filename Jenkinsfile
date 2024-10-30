@@ -32,10 +32,45 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Build commands go here
-                echo 'Building...'
+                script {
+                    githubCheckStatus(status: 'IN_PROGRESS', message: 'Build started')
+                    // Simulate build step (replace with actual build commands)
+                    echo 'Building...'
+                    // Mark as success upon completion
+                    githubCheckStatus(status: 'SUCCESS', message: 'Build successful')
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    githubCheckStatus(status: 'IN_PROGRESS', message: 'Testing started')
+                    // Simulate test step (replace with actual test commands)
+                    echo 'Testing...'
+                    // Mark as success upon completion
+                    githubCheckStatus(status: 'SUCCESS', message: 'Tests passed')
+                }
+            }
+        }
+    }
+    post {
+        always {
+            // Final status update depending on build result
+            if (currentBuild.result == 'SUCCESS') {
+                githubCheckStatus(status: 'SUCCESS', message: 'Pipeline completed successfully')
+            } else {
+                githubCheckStatus(status: 'FAILURE', message: 'Pipeline failed')
             }
         }
     }
 }
 
+def githubCheckStatus(status, message) {
+    step([
+        $class: 'GitHubChecksPublisher',
+        name: 'ci-pipeline',
+        status: status,
+        detailsURL: env.BUILD_URL,
+        description: message
+    ])
+}
