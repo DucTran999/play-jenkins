@@ -48,7 +48,7 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    sh """
+                    sh '''
                         curl --locaEXAMPLE_CREDS_USRtion 'https://api.github.com/repos/DucTran999/play-jenkins/statuses/$COMMIT_HASH' \
                         --header 'Accept: application/vnd.github+json' \
                         --header 'Authorization: Bearer $GITHUB_TOKEN' \
@@ -58,7 +58,7 @@ pipeline {
                             "state": "success",
                             "context": "continuous-integration/jenkins"
                         }'
-                        """
+                        '''
 
                     // if (response.status != 200) {
                     //     error "Failed to update GitHub status: ${response.status} - ${response.content}"
