@@ -54,10 +54,11 @@ pipeline {
                         requestBody: """{
                             "state": "success",
                             "description": "Build passed",
-                            "context": "ci/jenkins-pipeline",
-                            "target_url": "${env.BUILD_URL}"
+                            "context": "ci/jenkins-pipeline"
                         }""",
-                        authentication: GITHUB_TOKEN_CREDENTIALS
+                        customHeaders: [
+                            [name: 'Authorization', value: "Bearer ${GITHUB_TOKEN_CREDENTIALS}"]
+                        ]
                     )
 
                     if (response.status != 200) {
