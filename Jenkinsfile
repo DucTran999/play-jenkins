@@ -46,21 +46,21 @@ pipeline {
             steps {
                 echo 'Golangci-lint running...'
                 script{
-                    updateGitHubStatus(params.PENDING)
+                    updateGitHubStatus(params.PENDING, 'linting...')
                 }
             }
         }
     }
 }
 
-def updateGitHubStatus(String status) {
+def updateGitHubStatus(String status, String context) {
     def curlCommand = '''
-        curl --location 'https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}' \
-        -H 'Accept: application/vnd.github+json' \
-        -H 'Authorization: Bearer ${GITHUB_TOKEN}' \
-        -H 'X-GitHub-Api-Version: 2022-11-28' \
-        -H 'Content-Type: application/json' \
-        -d '{ "state": "$status", "context": "ok"}'\
+        curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -H "Content-Type: application/json" \
+        -d \'{"state": "''' + status + '''","context": "'''+ context +'''"}\'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
 
