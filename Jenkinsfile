@@ -37,7 +37,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'master', url: 'https://github.com/your-repo/project'
+                git branch: 'master', url: 'https://github.com/DucTran999/play-jenkins'
             }
         }
 
