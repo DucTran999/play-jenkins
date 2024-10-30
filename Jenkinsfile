@@ -62,7 +62,7 @@ void updateGitHubStatus(String status, String context) {
         -H "Authorization: Bearer ${GITHUB_TOKEN}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
-        -d \'{"state": "'''+status+'''","context": "'''+context+'''"}\'\
+        -d \'{"state": "'''+status+'''","context": "'''+context+'''","description":"build sucesstully"}\'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
 
