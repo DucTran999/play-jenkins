@@ -46,9 +46,9 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    def commitSha = params.commit_sha
+                    echo params.commit_sha
                     def response = httpRequest(
-                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${commitSha}",
+                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/params.commit_sha",
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: """{
@@ -69,8 +69,5 @@ pipeline {
                 }
             }
         }
-    }
-    parameters {
-        string(name: 'commit_sha', defaultValue: '', description: 'Commit SHA to update status')
     }
 }
