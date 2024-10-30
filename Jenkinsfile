@@ -1,22 +1,11 @@
 // pipeline {
 //     agent any
 
-//     tools {
-//         go '1.23.1'
-//     }
-    
 //     environment {
 //         HOME = "${env.WORKSPACE}"
 //     }
 
 //     stages {
-
-//         stage('Pull') {
-//             steps {
-//                 git 'https://github.com/DucTran999/play-jenkins.git'
-//                 sh 'go version'
-//             }
-//         }
 
 //         stage('Build') {
 //             steps{
@@ -28,10 +17,15 @@
 // }
 
 pipeline {
-    agent any 
+    agent any
+
+    tools {
+        go '1.23.1'
+    }
 
     environment {
         GITHUB_REPO = 'DucTran999/play-jenkins'
+        REPO_LINK = 'https://github.com/DucTran999/play-jenkins.git'
         COMMIT_MESSAGE = sh(script: "git log --format=%B -n 1", returnStdout: true).trim()
         COMMIT_HASH = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
         GITHUB_TOKEN = credentials('playjenkins')
@@ -39,14 +33,23 @@ pipeline {
 
     parameters {
         string(name: 'PENDING', defaultValue: 'pending', description: 'pending status')
+        string(name: 'SUCCESS', defaultValue: 'success', description: 'success status')
+        string(name: 'FAILURE', defaultValue: 'failure', description: 'failure status')
     }
 
     stages {
-        stage('Lint') {
+        stage('Pull') {
             steps {
                 echo 'Golangci-lint running...'
                 script{
                     updateGitHubStatus(params.PENDING, 'linting...')
+                }
+                git $REPO_LINK
+                sh 'go version'
+
+                echo 'Golangci-lint running...'
+                script{
+                    updateGitHubStatus(params.SUCCESS, 'linting...')
                 }
             }
         }
