@@ -51,7 +51,7 @@ pipeline {
     }
 }
 
-def updateGitHubStatus(status, context) {
+def updateGitHubStatus(String status,String context) {
     def curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
