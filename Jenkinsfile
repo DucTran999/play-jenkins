@@ -45,7 +45,7 @@ pipeline {
                     echo 'Running Golangci-lint...'
                     updateGitHubStatus(params.PENDING, 'linting...')
                     sh 'go version'
-                    updateGitHubStatus(params.SUCCESS, 'linting completed...')
+                    updateGitHubStatus(params.SUCCESS, 'linting...')
                 }
             }
         }
