@@ -48,29 +48,26 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    def statusCode = updateGitHubStatus()
-                    if (statusCode != '201') {
-                        error "Failed to update GitHub status: HTTP ${statusCode}"
-                    } else {
-                        echo "Successfully updated GitHub status for commit ${env.COMMIT_HASH}"
-                    }
+                    sh '''
+                        curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
+                        -H "Accept: application/vnd.github+json" \
+                        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                        -H "X-GitHub-Api-Version: 2022-11-28" \
+                        -H "Content-Type: application/json" \
+                        --data '{
+                            "state": "success",
+                            "context": "continuous-integration/jenkins"
+                        }'\
+                        --silent --output /dev/null --write-out "%{http_code}"
+                    '''
+
+                    // if (response.status != 200) {
+                    //     error "Failed to update GitHub status: ${response.status} - ${response.content}"
+                    // } else {
+                    //     echo "Successfully updated GitHub status for commit ${commitSha}"
+                    // }
                 }
             }
         }
     }
-}
-
-def updateGitHubStatus() {
-    return sh(script: '''
-        curl --location "https://api.github.com/${GITHUB_REPO}/play-jenkins/statuses/${COMMIT_HASH}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            -H "Content-Type: application/json" \
-            --data '{
-                "state": "success",
-                "context": "continuous-integration/jenkins"
-            }' \
-            --silent --output /dev/null --write-out "%{http_code}"
-    ''', returnStdout: true).trim()
 }
