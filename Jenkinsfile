@@ -63,7 +63,7 @@ pipeline {
                         "context": "ci/jenkins-pipeline",
                         "target_url": "${env.BUILD_URL}"
                     }""",
-                    authentication: 'github-token'
+                    authentication: 'playjenkins'
                 )
                 echo "GitHub Response: ${response.status}"
             }
