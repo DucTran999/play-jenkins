@@ -40,8 +40,7 @@ pipeline {
     stages {
         stage('Lint') {
             steps {
-                updateGitHubStatus("success", "ok")
-                
+                updateGitHubStatus("success", "continuous-integration/jenkins")
                 echo 'Golangci-lint running...'
                 // Your build steps here
 
@@ -59,7 +58,7 @@ def updateGitHubStatus(status, context) {
         -H "Content-Type: application/json" \
         --data '{
             "state": ${status},
-            "context": "continuous-integration/jenkins"
+            "context": ${context}
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
