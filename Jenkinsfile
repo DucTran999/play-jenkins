@@ -41,9 +41,9 @@ pipeline {
         stage('Pull') {
             steps {
                 echo 'Golangci-lint running...'
+                git 'https://github.com/DucTran999/play-jenkins.git'
                 script{
                     updateGitHubStatus(params.PENDING, 'linting...')
-                    sh 'git ${REPO_LINK}'
                     sh 'go version'
                 }
 
