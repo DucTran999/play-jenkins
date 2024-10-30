@@ -56,7 +56,7 @@ pipeline {
                             "description": "Build passed",
                             "context": "ci/jenkins-pipeline",
                         }""",
-                        authentication: playjenkins
+                        authentication: 'playjenkins'
                     )
 
                     if (response.status != 200) {
