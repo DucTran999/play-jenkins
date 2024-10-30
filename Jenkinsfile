@@ -39,10 +39,10 @@ pipeline {
     }
     post {
         success {
-            publishChecks('SUCCESS', 'Build completed successfully')
+            publishChecks(status: 'SUCCESS', message: 'Build completed successfully')
         }
         failure {
-            publishChecks('FAILURE', 'Build failed')
+            publishChecks(status: 'FAILURE', message: 'Build failed')
         }
     }
 }
