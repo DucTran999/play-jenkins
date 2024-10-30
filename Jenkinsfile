@@ -61,7 +61,7 @@ pipeline {
 }
 
 def updateGitHubStatus() {
-    return sh(script: """
+    return sh(script: '''
         curl --location "https://api.github.com/${GITHUB_REPO}/play-jenkins/statuses/${COMMIT_HASH}" \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GITHUB_TOKEN}" \
@@ -72,5 +72,5 @@ def updateGitHubStatus() {
                 "context": "continuous-integration/jenkins"
             }' \
             --silent --output /dev/null --write-out "%{http_code}"
-    """, returnStdout: true).trim()
+    ''', returnStdout: true).trim()
 }
