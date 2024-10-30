@@ -56,7 +56,9 @@ pipeline {
                             "description": "Build passed",
                             "context": "ci/jenkins-pipeline",
                         }""",
-                        authentication: GITHUB_TOKEN_CREDENTIALS
+                        customHeaders: [
+                            [name: 'Authorization', value: 'Bearer ${GITHUB_TOKEN_CREDENTIALS}']
+                        ]
                     )
 
                     if (response.status != 200) {
