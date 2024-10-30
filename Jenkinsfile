@@ -37,13 +37,12 @@ pipeline {
         GITHUB_TOKEN = credentials('playjenkins')
     }
 
+    parameters {
+        string(name: 'PENDING', defaultValue: 'pending', description: 'pending status')
+    }
+
     stages {
         stage('Lint') {
-            input {
-                parameters {
-                    string(name: 'PENDING', defaultValue: 'pending', description: 'pending status')
-                }
-            }
             steps {
                 echo 'Golangci-lint running...'
                 script{
