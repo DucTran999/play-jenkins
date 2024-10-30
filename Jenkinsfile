@@ -70,7 +70,6 @@ pipeline {
             }
         }
     }
-
     parameters {
         string(name: 'commit_sha', defaultValue: '', description: 'Commit SHA to update status')
     }
