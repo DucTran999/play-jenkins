@@ -59,8 +59,8 @@ def updateGitHubStatus(String status,String context) {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": ${status},
-            "context": ${context}
+            "state": '${status}',
+            "context": '${context}'
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
