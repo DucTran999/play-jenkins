@@ -53,7 +53,7 @@ pipeline {
     }
 }
 
-def updateGitHubStatus(status) {
+def updateGitHubStatus(String status) {
     def curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
@@ -61,7 +61,7 @@ def updateGitHubStatus(status) {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": "${status}",
+            "state": "'${status}'",
             "context": "ok"
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
