@@ -40,13 +40,15 @@ pipeline {
     stages {
         stage('Check lint') {
             steps {
-                try {
-                    updateGitHubStatus(params.PENDING, 'CI/Lint')
-                    sh 'go version'
-                    updateGitHubStatus(params.SUCCESS, 'CI/Lint')
-                } catch (err) {
-                    updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                    error "Shell command failed: ${e.message}"
+                script{
+                    try {
+                        updateGitHubStatus(params.PENDING, 'CI/Lint')
+                        sh 'go version'
+                        updateGitHubStatus(params.SUCCESS, 'CI/Lint')
+                    } catch (err) {
+                        updateGitHubStatus(params.FAILURE, 'CI/Lint')
+                        error "Shell command failed: ${e.message}"
+                    }
                 }
             }
         }
