@@ -57,7 +57,7 @@ pipeline {
                 script{
                     try {
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
-                        sh 'golangci-lint version'
+                        sh 'golangci-lint run'
                         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                     } catch (err) {
                         updateGitHubStatus(params.FAILURE, 'CI/Lint')
