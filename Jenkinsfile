@@ -39,8 +39,7 @@ pipeline {
 
     stages {
         stage('Pull') {
-            stages {
-                steps {
+            steps {
                 git 'https://github.com/DucTran999/play-jenkins.git'
                 script {
                     echo 'Running Golangci-lint...'
