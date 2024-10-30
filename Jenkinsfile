@@ -26,74 +26,35 @@
 //         }
 //     }
 // }
+
 pipeline {
     agent any
 
-    // Environment variables for GitHub integration
-    environment {
-        GITHUB_REPO = 'owner/repository'
-        GITHUB_TOKEN = credentials('github-token')
-    }
-
-    // Configure GitHub status checks
-    options {
-        githubSetConfig('GitHub')
+    parameters {
+        string(name: 'commit_sha', defaultValue: '', description: 'Commit SHA of the PR')
     }
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'master', url: 'https://github.com/your-repo/project'
+            }
+        }
+
         stage('Build') {
             steps {
-                // Set GitHub status to pending
-                githubNotify context: 'Build', description: 'Build in progress...', status: 'PENDING'
-                
-                try {
-                    sh 'mvn clean install'
-                    // If build succeeds, set status to success
-                    githubNotify context: 'Build', description: 'Build succeeded!', status: 'SUCCESS'
-                } catch (Exception e) {
-                    // If build fails, set status to failure
-                    githubNotify context: 'Build', description: 'Build failed!', status: 'FAILURE'
-                    throw e
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                githubNotify context: 'Test', description: 'Tests running...', status: 'PENDING'
-                
-                try {
-                    sh 'mvn test'
-                    githubNotify context: 'Test', description: 'Tests passed!', status: 'SUCCESS'
-                } catch (Exception e) {
-                    githubNotify context: 'Test', description: 'Tests failed!', status: 'FAILURE'
-                    throw e
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                githubNotify context: 'Deploy', description: 'Deployment in progress...', status: 'PENDING'
-                
-                try {
-                    sh 'your-deployment-script.sh'
-                    githubNotify context: 'Deploy', description: 'Deployment successful!', status: 'SUCCESS'
-                } catch (Exception e) {
-                    githubNotify context: 'Deploy', description: 'Deployment failed!', status: 'FAILURE'
-                    throw e
-                }
+                echo 'Building...'
+                // Add your build commands here
             }
         }
     }
 
-    // Post-build actions
     post {
         success {
-            githubNotify context: 'Pipeline', description: 'All stages completed successfully!', status: 'SUCCESS'
+            echo 'Build Successful'
         }
         failure {
-            githubNotify context: 'Pipeline', description: 'Pipeline failed!', status: 'FAILURE'
+            echo 'Build Failed'
         }
     }
 }
