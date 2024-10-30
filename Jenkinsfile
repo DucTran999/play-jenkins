@@ -48,19 +48,7 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    sh '''
-                        curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
-                        -H "Accept: application/vnd.github+json" \
-                        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-                        -H "X-GitHub-Api-Version: 2022-11-28" \
-                        -H "Content-Type: application/json" \
-                        --data '{
-                            "state": "success",
-                            "context": "continuous-integration/jenkins"
-                        }'\
-                        --silent --output /dev/null --write-out "%{http_code}"
-                    '''
-
+                    updateGitHubStatus()
                     // if (response.status != 200) {
                     //     error "Failed to update GitHub status: ${response.status} - ${response.content}"
                     // } else {
@@ -70,4 +58,20 @@ pipeline {
             }
         }
     }
+}
+
+def updateGitHubStatus() {
+    def script = '''
+        curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -H "Content-Type: application/json" \
+        --data '{
+            "state": "success",
+            "context": "continuous-integration/jenkins"
+        }'\
+        --silent --output /dev/null --write-out "%{http_code}"
+    '''
+    sh $script
 }
