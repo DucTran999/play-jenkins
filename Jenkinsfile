@@ -60,7 +60,7 @@ def updateGitHubStatus(String status) {
         -H "Authorization: Bearer ${GITHUB_TOKEN}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
-        -d \'{"state": "''' + status + '''","context": "ok"}\'\
+        -d '{ "state": "$status", "context": "ok"}'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
 
