@@ -43,9 +43,9 @@ pipeline {
                 echo 'Golangci-lint running...'
                 script{
                     updateGitHubStatus(params.PENDING, 'linting...')
+                    sh 'git ${REPO_LINK}'
+                    sh 'go version'
                 }
-                git '${REPO_LINK}'
-                sh 'go version'
 
                 echo 'Golangci-lint running...'
                 script{
