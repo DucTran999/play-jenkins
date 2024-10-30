@@ -38,29 +38,19 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage('Lint') {
             steps {
-                echo 'Building...'
+                updateGitHubStatus("success", "ok")
+                
+                echo 'Golangci-lint running...'
                 // Your build steps here
-            }
-        }
 
-        stage('Update GitHub Status') {
-            steps {
-                script {
-                    updateGitHubStatus()
-                    // if (response.status != 200) {
-                    //     error "Failed to update GitHub status: ${response.status} - ${response.content}"
-                    // } else {
-                    //     echo "Successfully updated GitHub status for commit ${commitSha}"
-                    // }
-                }
             }
         }
     }
 }
 
-def updateGitHubStatus() {
+def updateGitHubStatus(status, context) {
     def curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
@@ -68,18 +58,17 @@ def updateGitHubStatus() {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": "success",
+            "state": ${status},
             "context": "continuous-integration/jenkins"
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
 
     def responseCode = sh(script: curlCommand, returnStdout: true).trim()
-
-    // Check if the response code is 201 (GitHub's success status for status update)
-    if (responseCode != '201') {
-        error "Failed to update GitHub status: HTTP ${responseCode}"
-    } else {
+    
+    if (responseCode == '201') {
         echo "Successfully updated GitHub status for commit ${env.COMMIT_HASH}"
+    } else {
+        error "Failed to update GitHub status: HTTP ${responseCode}"
     }
 }
