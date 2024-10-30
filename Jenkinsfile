@@ -57,15 +57,14 @@ pipeline {
                         --data '{
                             "state": "success",
                             "context": "continuous-integration/jenkins"
-                        }' \
-                        --write-out '%{http_code}' --silent --output /dev/null
+                        }'
                         """, returnStdout: true).trim()
 
-                    if (response.status != 200) {
-                        error "Failed to update GitHub status: ${response.status} - ${response.content}"
-                    } else {
-                        echo "Successfully updated GitHub status for commit ${commitSha}"
-                    }
+                    // if (response.status != 200) {
+                    //     error "Failed to update GitHub status: ${response.status} - ${response.content}"
+                    // } else {
+                    //     echo "Successfully updated GitHub status for commit ${commitSha}"
+                    // }
                 }
             }
         }
