@@ -32,7 +32,7 @@ pipeline {
 
     environment {
         GITHUB_REPO = 'DucTran999/play-jenkins'
-        GITHUB_TOKEN_CREDENTIALS = 'playjenkins'
+        GITHUB_TOKEN_CREDENTIALS = credentials('playjenkins')
     }
 
     stages {
