@@ -46,9 +46,10 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    echo params.commit_sha
+                    def params = getLastSuccessfulCommit()
+                    echo $params
                     def response = httpRequest(
-                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/params.commit_sha",
+                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${params}",
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: """{
@@ -70,4 +71,14 @@ pipeline {
             }
         }
     }
+}
+
+def getLastSuccessfulCommit() {
+  def lastSuccessfulHash = null
+  def lastSuccessfulBuild = currentBuild.rawBuild.getPreviousSuccessfulBuild()
+  if ( lastSuccessfulBuild ) {
+    lastSuccessfulHash = commitHashForBuild( lastSuccessfulBuild )
+  }
+
+  return lastSuccessfulHash
 }
