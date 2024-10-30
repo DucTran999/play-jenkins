@@ -38,14 +38,14 @@ pipeline {
     }
 
     stages {
-        stage('Pull') {
+        stage('Check lint') {
             steps {
                 git 'https://github.com/DucTran999/play-jenkins.git'
                 script {
-                    echo 'Running Golangci-lint...'
-                    updateGitHubStatus(params.PENDING, 'linting...')
+                    echo 'Checkout code'
+                    updateGitHubStatus(params.PENDING, 'CI/Lint')
                     sh 'go version'
-                    updateGitHubStatus(params.SUCCESS, 'linting...')
+                    updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                 }
             }
         }
