@@ -75,5 +75,5 @@ def updateGitHubStatus(status) {
         error "Failed to update GitHub status: HTTP ${responseCode}"
     }
 
-    echo $status
+    echo status
 }
