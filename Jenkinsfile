@@ -33,6 +33,7 @@ pipeline {
     environment {
         GITHUB_REPO = 'DucTran999/play-jenkins'
         GITHUB_TOKEN_CREDENTIALS = credentials('playjenkins')
+        COMMIT_MESSAGE = sh(script: "git log --format=%B -n 1", returnStdout: true).trim()
     }
 
     stages {
@@ -46,10 +47,9 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    def params = getLastSuccessfulCommit()
-                    echo $params
+                    echo COMMIT_MESSAGE
                     def response = httpRequest(
-                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${params}",
+                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses",
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: """{
@@ -71,14 +71,4 @@ pipeline {
             }
         }
     }
-}
-
-def getLastSuccessfulCommit() {
-  def lastSuccessfulHash = null
-  def lastSuccessfulBuild = currentBuild.rawBuild.getPreviousSuccessfulBuild()
-  if ( lastSuccessfulBuild ) {
-    lastSuccessfulHash = commitHashForBuild( lastSuccessfulBuild )
-  }
-
-  return lastSuccessfulHash
 }
