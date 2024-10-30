@@ -28,41 +28,49 @@
 // }
 
 pipeline {
-    agent any
+    agent any 
 
-    parameters {
-        string(name: 'commit_sha', defaultValue: '', description: 'Commit SHA of the PR')
+    environment {
+        GITHUB_REPO = 'DucTran999/play-jenkins'
+        GITHUB_TOKEN_CREDENTIALS = 'github-token'
     }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/DucTran999/play-jenkins'
-            }
-        }
-
         stage('Build') {
             steps {
                 echo 'Building...'
-                // Add your build commands here
+                // Your build steps here
+            }
+        }
+
+        stage('Update GitHub Status') {
+            steps {
+                script {
+                    def commitSha = params.commit_sha
+                    def response = httpRequest(
+                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${commitSha}",
+                        httpMode: 'POST',
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: """{
+                            "state": "success",
+                            "description": "Build passed",
+                            "context": "ci/jenkins-pipeline",
+                            "target_url": "${env.BUILD_URL}"
+                        }""",
+                        authentication: GITHUB_TOKEN_CREDENTIALS
+                    )
+
+                    if (response.status != 200) {
+                        error "Failed to update GitHub status: ${response.status} - ${response.content}"
+                    } else {
+                        echo "Successfully updated GitHub status for commit ${commitSha}"
+                    }
+                }
             }
         }
     }
 
-    post {
-        success {
-            script {
-                echo "Sending 'success' status to GitHub"
-                publishChecks name: 'example', title: 'Pipeline Check', summary: 'check through pipeline',
-                    text: 'you can publish checks in pipeline script',
-                    detailsURL: 'https://github.com/DucTran999/play-jenkins',
-                    actions: [[label:'an-user-request-action', description:'actions allow users to request pre-defined behaviours', identifier:'an unique identifier']]
-                echo "GitHub Response: ${response.status}"
-            }
-        }
-
-        always {
-            echo "Pipeline finished. Commit SHA: ${params.commit_sha}"
-        }
+    parameters {
+        string(name: 'commit_sha', defaultValue: '', description: 'Commit SHA to update status')
     }
 }
