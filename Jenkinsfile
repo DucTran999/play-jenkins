@@ -26,8 +26,8 @@ pipeline {
     environment {
         GITHUB_REPO = 'DucTran999/play-jenkins'
         REPO_LINK = 'https://github.com/DucTran999/play-jenkins.git'
-        COMMIT_MESSAGE = sh(script: "git log --format=%B -n 1", returnStdout: true).trim()
-        COMMIT_HASH = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+        COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
+        COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         GITHUB_TOKEN = credentials('playjenkins')
     }
 
@@ -40,31 +40,32 @@ pipeline {
     stages {
         stage('Check lint') {
             steps {
-                git 'https://github.com/DucTran999/play-jenkins.git'
-                script {
-                    echo 'Checkout code'
+                try {
                     updateGitHubStatus(params.PENDING, 'CI/Lint')
                     sh 'go version'
                     updateGitHubStatus(params.SUCCESS, 'CI/Lint')
+                } catch (err) {
+                    updateGitHubStatus(params.FAILURE, 'CI/Lint')
+                    error "Shell command failed: ${e.message}"
                 }
             }
         }
     }
 }
 
-def updateGitHubStatus(String status, String context) {
-    def curlCommand = '''
+void updateGitHubStatus(String status, String context) {
+    String curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${GITHUB_TOKEN}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
-        -d \'{"state": "''' + status + '''","context": "'''+ context +'''"}\'\
+        -d \'{"state": "'''+status+'''","context": "'''+context+'''"}\'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
 
-    def responseCode = sh(script: curlCommand, returnStdout: true).trim()
-    
+    String responseCode = sh(script: curlCommand, returnStdout: true).trim()
+
     if (responseCode == '201') {
         echo "Successfully updated GitHub status for commit ${env.COMMIT_HASH}"
     } else {
