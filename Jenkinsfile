@@ -46,8 +46,6 @@ pipeline {
                     def context = 'continuous-integration/jenkins...'
                     updateGitHubStatus(pending, context)
                 }
-                // Your build steps here
-
             }
         }
     }
