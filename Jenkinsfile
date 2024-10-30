@@ -39,19 +39,22 @@ pipeline {
 
     stages {
         stage('Lint') {
+            input {
+                parameters {
+                    string(name: 'PENDING', defaultValue: 'pending', description: 'pending status')
+                }
+            }
             steps {
                 echo 'Golangci-lint running...'
                 script{
-                    def pending = 'success'
-                    def context = 'continuous-integration/jenkins...'
-                    updateGitHubStatus()
+                    updateGitHubStatus($PENDING)
                 }
             }
         }
     }
 }
 
-def updateGitHubStatus() {
+def updateGitHubStatus(status) {
     def curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
@@ -59,7 +62,7 @@ def updateGitHubStatus() {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": "success",
+            "state": "${status}",
             "context": "ok"
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
