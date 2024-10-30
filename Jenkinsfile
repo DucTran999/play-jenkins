@@ -41,9 +41,11 @@ pipeline {
         stage('Lint') {
             steps {
                 echo 'Golangci-lint running...'
-                def pending = 'success'
-                def context = 'continuous-integration/jenkins...'
-                updateGitHubStatus(pending, context)
+                script{
+                    def pending = 'success'
+                    def context = 'continuous-integration/jenkins...'
+                    updateGitHubStatus(pending, context)
+                }
                 // Your build steps here
 
             }
