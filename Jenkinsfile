@@ -61,7 +61,7 @@ def updateGitHubStatus(String status) {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": "'${status}'",
+            "state": "'$status'",
             "context": "ok"
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
