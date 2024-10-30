@@ -33,13 +33,42 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo 'Building...' // Replace with actual build commands
+                    // Start build status
+                    githubCheckStatus(status: 'IN_PROGRESS', message: 'Build in progress')
+                    echo 'Building...'
+                    // Mark build status as successful
+                    githubCheckStatus(status: 'SUCCESS', message: 'Build successful')
                 }
-                publishChecks name: 'example', title: 'Pipeline Check', summary: 'check through pipeline',
-                text: 'you can publish checks in pipeline script',
-                detailsURL: "https://github.com/DucTran999/play-jenkins",
-                actions: [[label:'an-user-request-action', description:'actions allow users to request pre-defined behaviours', identifier:'an unique identifier']]
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    // Start test status
+                    githubCheckStatus(status: 'IN_PROGRESS', message: 'Testing in progress')
+                    echo 'Testing...'
+                    // Mark test status as successful
+                    githubCheckStatus(status: 'SUCCESS', message: 'Tests passed')
+                }
             }
         }
     }
+    post {
+        success {
+            githubCheckStatus(status: 'SUCCESS', message: 'Pipeline completed successfully')
+        }
+        failure {
+            githubCheckStatus(status: 'FAILURE', message: 'Pipeline failed')
+        }
+    }
+}
+
+def githubCheckStatus(status, message) {
+    step([
+        $class: 'GitHubChecksPublisher',
+        name: 'ci-pipeline',  // Context name displayed in GitHub checks
+        status: status,
+        detailsURL: env.BUILD_URL,
+        description: message
+    ])
 }
