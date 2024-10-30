@@ -61,7 +61,7 @@ def updateGitHubStatus(status) {
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -H "Content-Type: application/json" \
         --data '{
-            "state": "success",
+            "state": status,
             "context": "ok"
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
@@ -74,6 +74,4 @@ def updateGitHubStatus(status) {
     } else {
         error "Failed to update GitHub status: HTTP ${responseCode}"
     }
-
-    echo status
 }
