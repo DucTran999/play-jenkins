@@ -62,9 +62,9 @@ pipeline {
 
 def updateGitHubStatus() {
     return sh(script: """
-        curl --location 'https://api.github.com/${GITHUB_REPO}/play-jenkins/statuses/${COMMIT_HASH}' \
+        curl --location "https://api.github.com/${GITHUB_REPO}/play-jenkins/statuses/${COMMIT_HASH}" \
             -H "Accept: application/vnd.github+json" \
-            -H 'Authorization: Bearer ${GITHUB_TOKEN}' \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -H "Content-Type: application/json" \
             --data '{
