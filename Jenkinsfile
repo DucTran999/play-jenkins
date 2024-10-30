@@ -48,7 +48,6 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    echo COMMIT_MESSAGE
                     def response = httpRequest(
                         url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}",
                         httpMode: 'POST',
