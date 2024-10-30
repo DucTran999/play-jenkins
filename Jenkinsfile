@@ -38,6 +38,18 @@ pipeline {
     }
 
     stages {
+        // stage('Checkout') {
+        //     steps {
+        //         // Checkout the source code from the repository
+        //         git url: 'https://github.com/your/repo.git', branch: 'main'
+        //     }
+        // }
+        stage('Install golangci-lint') {
+            steps {
+                // Install golangci-lint if not already installed
+                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.0'
+            }
+        }
         stage('Check lint') {
             steps {
                 script{
