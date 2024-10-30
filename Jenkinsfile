@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     def response = sh(script: '''
-                        curl --location --silent --write-out '%{http_code}' --output /dev/null 'https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}' \
+                        curl --location 'https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}' \
                         --header 'Accept: application/vnd.github+json' \
                         --header 'Authorization: Bearer ${GITHUB_TOKEN}' \
                         --header 'X-GitHub-Api-Version: 2022-11-28' \
@@ -58,6 +58,7 @@ pipeline {
                             "state": "success",
                             "context": "continuous-integration/jenkins"
                         }'
+
                     ''', returnStdout: true).trim()
 
                     if (response.status != 200) {
