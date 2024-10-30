@@ -46,7 +46,7 @@ pipeline {
             steps {
                 echo 'Golangci-lint running...'
                 script{
-                    updateGitHubStatus(parameters.PENDING)
+                    updateGitHubStatus('${parameters.PENDING}')
                 }
             }
         }
