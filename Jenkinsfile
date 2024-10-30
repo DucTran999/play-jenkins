@@ -32,7 +32,6 @@ pipeline {
 
     environment {
         GITHUB_REPO = 'DucTran999/play-jenkins'
-        GITHUB_TOKEN_CREDENTIALS = credentials('playjenkins')
         COMMIT_MESSAGE = sh(script: "git log --format=%B -n 1", returnStdout: true).trim()
         COMMIT_HASH = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
     }
@@ -57,7 +56,7 @@ pipeline {
                             "description": "Build passed",
                             "context": "ci/jenkins-pipeline",
                         }""",
-                        authentication: "playjenkins"
+                        authentication: playjenkins
                     )
 
                     if (response.status != 200) {
