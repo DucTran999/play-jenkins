@@ -49,9 +49,9 @@ pipeline {
             steps {
                 script {
                     def response = sh(script: """
-                        curl --location 'https://api.github.com/repos/DucTran999/play-jenkins/statuses/${env.COMMIT_HASH}' \
+                        curl --location 'https://api.github.com/repos/DucTran999/play-jenkins/statuses/$COMMIT_HASH' \
                         --header 'Accept: application/vnd.github+json' \
-                        --header 'Authorization: Bearer ${env.GITHUB_TOKEN}' \
+                        --header 'Authorization: Bearer $GITHUB_TOKEN' \
                         --header 'X-GitHub-Api-Version: 2022-11-28' \
                         --header 'Content-Type: application/json' \
                         --data '{
