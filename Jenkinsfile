@@ -34,6 +34,7 @@ pipeline {
         GITHUB_REPO = 'DucTran999/play-jenkins'
         COMMIT_MESSAGE = sh(script: "git log --format=%B -n 1", returnStdout: true).trim()
         COMMIT_HASH = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+        GITHUB_TOKEN = credentials('playjenkins')
     }
 
     stages {
@@ -47,17 +48,15 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    def response = httpRequest(
-                        url: "https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}",
-                        httpMode: 'POST',
-                        contentType: 'APPLICATION_JSON',
-                        requestBody: """{
-                            "state": "success",
-                            "description": "Build passed",
-                            "context": "ci/jenkins-pipeline",
-                        }""",
-                        authentication: 'playjenkins'
-                    )
+                    curl --location 'https://api.github.com/repos/${GITHUB_REPO}/statuses/${COMMIT_HASH}' \
+                    --header 'Accept: application/vnd.github+json' \
+                    --header 'Authorization: Bearer ${GITHUB_TOKEN}' \
+                    --header 'X-GitHub-Api-Version: 2022-11-28' \
+                    --header 'Content-Type: application/json' \
+                    --data '{
+                        "state": "success",
+                        "context": "continuous-integration/jenkins"
+                    }'
 
                     if (response.status != 200) {
                         error "Failed to update GitHub status: ${response.status} - ${response.content}"
