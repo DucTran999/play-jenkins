@@ -61,7 +61,7 @@ pipeline {
 }
 
 def updateGitHubStatus() {
-    def script = '''
+    def curlCommand = '''
         curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${GITHUB_TOKEN}" \
@@ -73,5 +73,13 @@ def updateGitHubStatus() {
         }'\
         --silent --output /dev/null --write-out "%{http_code}"
     '''
-    sh $script
+
+    def responseCode = sh(script: curlCommand, returnStdout: true).trim()
+
+    // Check if the response code is 201 (GitHub's success status for status update)
+    if (responseCode != '201') {
+        error "Failed to update GitHub status: HTTP ${responseCode}"
+    } else {
+        echo "Successfully updated GitHub status for commit ${env.COMMIT_HASH}"
+    }
 }
