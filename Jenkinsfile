@@ -57,7 +57,7 @@ pipeline {
                             "description": "Build passed",
                             "context": "ci/jenkins-pipeline",
                         }""",
-                        authentication: "${GITHUB_TOKEN_CREDENTIALS}"
+                        authentication: "playjenkins"
                     )
 
                     if (response.status != 200) {
