@@ -53,18 +53,10 @@ pipeline {
         success {
             script {
                 echo "Sending 'success' status to GitHub"
-                def response = httpRequest(
-                    url: "https://api.github.com/repos/DucTran999/play-jenkins/project/statuses/${params.commit_sha}",
-                    httpMode: 'POST',
-                    contentType: 'APPLICATION_JSON',
-                    requestBody: """{
-                        "state": "success",
-                        "description": "Build passed",
-                        "context": "ci/jenkins-pipeline",
-                        "target_url": "${env.BUILD_URL}"
-                    }""",
-                    authentication: 'playjenkins'
-                )
+                publishChecks name: 'example', title: 'Pipeline Check', summary: 'check through pipeline',
+                    text: 'you can publish checks in pipeline script',
+                    detailsURL: 'https://github.com/DucTran999/play-jenkins',
+                    actions: [[label:'an-user-request-action', description:'actions allow users to request pre-defined behaviours', identifier:'an unique identifier']]
                 echo "GitHub Response: ${response.status}"
             }
         }
