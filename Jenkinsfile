@@ -6,11 +6,13 @@ pipeline {
     }
 
     environment {
+        GITHUB_TOKEN = credentials('playjenkins')
+        GITHUB_REPO_URL = 'https://github.com/DucTran999/play-jenkins.git'
         GITHUB_REPO = 'DucTran999/play-jenkins'
-        REPO_LINK = 'https://github.com/DucTran999/play-jenkins.git'
+        
         COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
         COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-        GITHUB_TOKEN = credentials('playjenkins')
+        
         GOPATH = "${env.WORKSPACE}/go"
         PATH = "${GOPATH}/bin:${env.PATH}" 
     }
@@ -26,6 +28,16 @@ pipeline {
             steps {
                 script{
                     try {
+                        if (env.CHANGE_ID) {
+                            echo "Triggered by a Pull Request"
+                            echo "Pull Request ID: ${env.CHANGE_ID}"
+                            echo "Target Branch: ${env.CHANGE_TARGET}"
+                            echo "Source Branch: ${env.BRANCH_NAME}"
+                        } else {
+                            echo "Triggered by a Push"
+                            echo "Branch Name: ${env.BRANCH_NAME}"
+                            echo "Commit SHA: ${env.GIT_COMMIT}"
+                        }
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
                         sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
                         sh 'golangci-lint run'
