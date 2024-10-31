@@ -4,7 +4,11 @@ pipeline {
     tools {
         go '1.23.1'
     }
-
+    
+    triggers {
+        githubPush()
+    }
+    
     environment {
         GITHUB_TOKEN = credentials('playjenkins')
         GITHUB_REPO_URL = 'https://github.com/DucTran999/play-jenkins.git'
