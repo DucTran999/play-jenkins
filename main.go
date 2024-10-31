@@ -9,5 +9,5 @@ import (
 func main() {
 	sum := calc.Sum(1, 2, 3, 45)
 
-	fmt.Println("Sum %s", sum)
+	fmt.Printf("Sum %s", sum)
 }
