@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	sum := calc.Sum(1, 2, 3, 45)
+	sum := calc.Sum(1, 2, 3, 4)
 
 	fmt.Printf("Sum %s", sum)
 }
