@@ -8,5 +8,5 @@ import (
 
 func main() {
 	sum := calc.Sum(1, 2, 3, 4)
-	fmt.Println("Sum", sum)
+	fmt.Println("Sum %d", sum)
 }
