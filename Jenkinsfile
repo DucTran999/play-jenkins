@@ -7,6 +7,7 @@ pipeline {
 
     triggers {
         githubPush()
+        githubPullRequests()
     }
 
     environment {
