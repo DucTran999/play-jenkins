@@ -28,15 +28,14 @@ pipeline {
             steps {
                 script{
                     try {
-                        if (env.CHANGE_ID) {
-                            echo "Triggered by a Pull Request"
-                            echo "Pull Request ID: ${env.CHANGE_ID}"
-                            echo "Target Branch: ${env.CHANGE_TARGET}"
-                            echo "Source Branch: ${env.BRANCH_NAME}"
+                        if (env.CHANGE_ID && env.CHANGE_TARGET == 'dev') {
+                        echo "Triggered by a Pull Request to 'dev' branch"
+                        echo "Pull Request ID: ${env.CHANGE_ID}"
+                        echo "Source Branch: ${env.BRANCH_NAME}"
+                        } else if (env.CHANGE_ID) {
+                            echo "Triggered by a Pull Request to a different branch (${env.CHANGE_TARGET})"
                         } else {
-                            echo "Triggered by a Push"
-                            echo "Branch Name: ${env.BRANCH_NAME}"
-                            echo "Commit SHA: ${env.GIT_COMMIT}"
+                            echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
                         }
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
                         sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
