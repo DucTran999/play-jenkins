@@ -26,8 +26,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    mkdir -p ${GOPATH}/bin
-                    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOPATH}/bin v1.50.0
+                    echo $(go env GOPATH)
+                    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0
                     '''
                 }
             }
@@ -38,7 +38,7 @@ pipeline {
                 script{
                     try {
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
-                        sh 'pwd'
+                        sh 'echo ok'
                         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                     } catch (err) {
                         updateGitHubStatus(params.FAILURE, 'CI/Lint')
