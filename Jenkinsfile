@@ -22,23 +22,16 @@ pipeline {
     }
 
     stages {
-        stage('Install golangci-lint') {
-            steps {
-                script {
-                    sh '''
-                    echo $(go env GOPATH)
-                    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0
-                    '''
-                }
-            }
-        }
-
         stage('Check lint') {
             steps {
                 script{
                     try {
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
-                        sh 'golangci-lint run'
+                        sh '''
+                            echo $(go env GOPATH)
+                            curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0
+                            golangci-lint run'
+                        '''
                         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                     } catch (err) {
                         updateGitHubStatus(params.FAILURE, 'CI/Lint')
