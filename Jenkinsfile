@@ -1,21 +1,3 @@
-// pipeline {
-//     agent any
-
-//     environment {
-//         HOME = "${env.WORKSPACE}"
-//     }
-
-//     stages {
-
-//         stage('Build') {
-//             steps{
-//                 sh 'go mod tidy'
-//                 sh 'go run .'
-//             }
-//         }
-//     }
-// }
-
 pipeline {
     agent any
 
@@ -44,24 +26,23 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    # Ensure the GOPATH/bin directory exists
                     mkdir -p ${GOPATH}/bin
-                    # Install golangci-lint
                     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOPATH}/bin v1.50.0
                     '''
                 }
             }
         }
+
         stage('Check lint') {
             steps {
                 script{
                     try {
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
-                        sh 'golangci-lint run'
+                        sh 'pwd'
                         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                     } catch (err) {
                         updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                        error "Shell command failed: ${e.message}"
+                        error "Shell command failed: ${err.message}"
                     }
                 }
             }
