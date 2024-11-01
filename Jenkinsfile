@@ -13,14 +13,14 @@ pipeline {
         GITHUB_TOKEN = credentials('playjenkins')
         GITHUB_REPO_URL = 'https://github.com/DucTran999/play-jenkins.git'
         GITHUB_REPO = 'DucTran999/play-jenkins'
-        
+
         COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
         COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
-        
+
         GOPATH = "${env.WORKSPACE}/go"
-        CGO_ENABLED=1
-        PATH = "${GOPATH}/bin:${env.PATH}" 
+        CGO_ENABLED = 1
+        PATH = "${GOPATH}/bin:${env.PATH}"
         GO114MODULE = 'on'
     }
 
@@ -32,72 +32,73 @@ pipeline {
 
     stages {
         stage('CI') {
-            paralell{
-  when {
-                expression {
-                    env.BRANCH_NAME ==~ /feature\/.*/
-                }
-            }
-            steps {
-                script {
-                    try {
-                        echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
-                        updateGitHubStatus(params.PENDING, 'CI/Lint')
-                        sh 'go clean -modcache'
-                        sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
-                        sh 'go mod tidy'
-                        sh 'golangci-lint run .'
-                        updateGitHubStatus(params.SUCCESS, 'CI/Lint')
-                    } catch (err) {
-                        updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                        error "Shell command failed: ${err.message}"
+            paralell {
+                stage('Lint') {
+                    when {
+                        expression {
+                            env.BRANCH_NAME ==~ /feature\/.*/
+                        }
+                    }
+                    steps {
+                        script {
+                            try {
+                                echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
+                                updateGitHubStatus(params.PENDING, 'CI/Lint')
+                                sh 'go clean -modcache'
+                                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
+                                sh 'go mod tidy'
+                                sh 'golangci-lint run .'
+                                updateGitHubStatus(params.SUCCESS, 'CI/Lint')
+                            } catch (err) {
+                                    updateGitHubStatus(params.FAILURE, 'CI/Lint')
+                                    error "Shell command failed: ${err.message}"
+                                }
+                            }
                     }
                 }
-            }
-            }
-        }
-        stage('Test') {
-            paralell{
-  when {
-                expression {
-                    env.BRANCH_NAME ==~ /feature\/.*/
-                }
-            }
-            steps {
-                script {
-                    try {
-                        echo "Running tests on branch: ${env.BRANCH_NAME}"
-                        updateGitHubStatus(params.PENDING, 'CI/Test')
-                        sh 'make test'
-                        updateGitHubStatus(params.SUCCESS, 'CI/Test')
-                    } catch (err) {
-                        updateGitHubStatus(params.FAILURE, 'CI/Test')
-                        error "Test command failed: ${err.message}"
+                stage('Test') {
+                    {
+                        expression {
+                            env.BRANCH_NAME ==~ /feature\/.*/
+                        }
+                    }
+                    steps {
+                        script {
+                            try {
+                                echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
+                                updateGitHubStatus(params.PENDING, 'CI/Lint')
+                                sh 'go clean -modcache'
+                                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
+                                sh 'go mod tidy'
+                                sh 'golangci-lint run .'
+                                updateGitHubStatus(params.SUCCESS, 'CI/Lint')
+                            } catch (err) {
+                                updateGitHubStatus(params.FAILURE, 'CI/Lint')
+                                error "Shell command failed: ${err.message}"
+                            }
+                        }
                     }
                 }
-            }
-            }
-        }
-        stage('Coverage') {
-            paralell{
-                when {
-                expression {
-                    env.BRANCH_NAME ==~ /feature\/.*/
-                }
-            }
-            steps {
-                script {
-                    try {
-                        echo "Cheking coverage on branch: ${env.BRANCH_NAME}"
-                        updateGitHubStatus(params.PENDING, 'CI/Coverage')
-                        sh 'make coverage'
-                        updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
-                    } catch (err) {
-                        updateGitHubStatus(params.FAILURE, 'CI/Coverage')
-                        error "Test command failed: ${err.message}"
+                stage('Coverage') {
+                    when {
+                        expression {
+                            env.BRANCH_NAME ==~ /feature\/.*/
+                        }
+                    }
+                    steps {
+                        script {
+                            try {
+                                echo "Cheking coverage on branch: ${env.BRANCH_NAME}"
+                                updateGitHubStatus(params.PENDING, 'CI/Coverage')
+                                sh 'make coverage'
+                                updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
+                        } catch (err) {
+                                updateGitHubStatus(params.FAILURE, 'CI/Coverage')
+                                error "Test command failed: ${err.message}"
+                            }
+                        }
                     }
                 }
-            }
             }
         }
     }
