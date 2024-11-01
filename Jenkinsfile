@@ -31,8 +31,21 @@ pipeline {
     }
 
     stages {
+        stage('Install dependecies') {
+            when {
+                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+            }
+            steps{
+                script{
+                    sh 'go clean -modcache'
+                    sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
+                    sh 'go mod tidy'
+                }
+            }
+        }
         stage('CI') {
-                            stage('Lint') {
+            parallel {
+                   stage('Lint') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
                     }
@@ -41,9 +54,6 @@ pipeline {
                             try {
                                 echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Lint')
-                                sh 'go clean -modcache'
-                                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
-                                sh 'go mod tidy'
                                 sh 'golangci-lint run .'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                             } catch (err) {
@@ -53,7 +63,6 @@ pipeline {
                         }
                     }
                 }
-            parallel {
                 stage('Test') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
