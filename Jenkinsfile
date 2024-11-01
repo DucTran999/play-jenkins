@@ -30,50 +30,56 @@ pipeline {
     }
 
     stages {
+        stage('Load Scripts') {
+            steps {
+                script {
+                    ciWorkflows = load './ci.groovy'
+                }
+            }
+        }
         stage('Install dependecies') {
             when {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
             }
             steps {
                 script {
-                    ciWorkflows = load './script.groovy'
                     ciWorkflows.installDependencies()
                 }
             }
         }
-        // stage('CI') {
-        //     parallel {
-        //         stage('Lint') {
-        //             when {
-        //                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        //             }
-        //             steps {
-        //                 script {
-        //                     ciWorkflows.runLint()
-        //                 }
-        //             }
-        //         }
-        //         stage('Test') {
-        //             when {
-        //                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        //             }
-        //             steps {
-        //                 script {
-        //                     ciWorkflows.runLint()
-        //                 }
-        //             }
-        //         }
-        //         stage('Coverage') {
-        //             when {
-        //                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        //             }
-        //             steps {
-        //                 script {
-        //                     ciWorkflows.checkCoverage()
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('CI') {
+            parallel {
+                stage('Lint') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            ciWorkflows.runLint()
+                        }
+                    }
+                }
+                stage('Test') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            ciWorkflows.runLint()
+                        }
+                    }
+                }
+                stage('Coverage') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            ciWorkflows.checkCoverage()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
