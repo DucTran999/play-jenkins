@@ -92,7 +92,7 @@ pipeline {
                             try {
                                 echo "Checking coverage on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Coverage')
-                                sh 'go clean -modecache'
+                                sh 'go clean -modcache'
                                 sh 'go mod tidy'
                                 sh 'make coverage'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
