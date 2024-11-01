@@ -18,9 +18,10 @@ pipeline {
         COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
         
+        GOPATH = "${env.WORKSPACE}/go"
+        PATH = "${GOPATH}/bin:${env.PATH}" 
         GO114MODULE = 'on'
         CGO_ENABLED = 0 
-        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
     }
 
     parameters {
