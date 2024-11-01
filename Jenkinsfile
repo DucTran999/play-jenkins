@@ -74,6 +74,26 @@ pipeline {
                 }
             }
         }
+        stage('Coverage') {
+            when {
+                expression {
+                    env.BRANCH_NAME ==~ /feature\/.*/
+                }
+            }
+            steps {
+                script {
+                    try {
+                        echo "Cheking coverage on branch: ${env.BRANCH_NAME}"
+                        updateGitHubStatus(params.PENDING, 'CI/Test')
+                        sh 'make coverage'
+                        updateGitHubStatus(params.SUCCESS, 'CI/Test')
+                    } catch (err) {
+                        updateGitHubStatus(params.FAILURE, 'CI/Test')
+                        error "Test command failed: ${err.message}"
+                    }
+                }
+            }
+        }
     }
 }
 
