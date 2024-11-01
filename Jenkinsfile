@@ -1,5 +1,3 @@
-def ciWorkflows = load 'ci.groovy'
-
 pipeline {
     agent any
 
@@ -32,6 +30,13 @@ pipeline {
     }
 
     stages {
+        stage('Load Scripts') {
+            steps {
+                script {
+                    ciWorkflows = load './ci.groovy'
+                }
+            }
+        }
         stage('Install dependecies') {
             when {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
@@ -43,31 +48,27 @@ pipeline {
             }
         }
         stage('CI') {
+            when {
+                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+            }
             parallel {
                 stage('Lint') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
                     steps {
                         script {
                             ciWorkflows.runLint()
                         }
                     }
                 }
+
                 stage('Test') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
                     steps {
                         script {
-                            ciWorkflows.runLint()
+                            ciWorkflows.runTests()
                         }
                     }
                 }
+
                 stage('Coverage') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
                     steps {
                         script {
                             ciWorkflows.checkCoverage()
