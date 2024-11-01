@@ -1,3 +1,4 @@
+def ciWorkflows
 
 pipeline {
     agent any
@@ -9,13 +10,6 @@ pipeline {
     triggers {
         githubPush()
     }
-
-    agent{
-        node {
-            def ciWorkflows = load 'ci.groovy'
-        }
-    }
-
 
     environment {
         GITHUB_TOKEN = credentials('playjenkins')
@@ -38,6 +32,15 @@ pipeline {
     }
 
     stages {
+        stage('Load Scripts') {
+            steps {
+                script {
+                    node {
+                        iWorkflows = load 'ci.groovy'
+                    }
+                }
+            }
+        }
         stage('Install dependecies') {
             when {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
