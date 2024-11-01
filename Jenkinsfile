@@ -1,4 +1,3 @@
-def ciWorkflows = load 'ci.groovy'
 
 pipeline {
     agent any
@@ -9,6 +8,10 @@ pipeline {
 
     triggers {
         githubPush()
+    }
+
+    node {
+        def ciWorkflows = load 'ci.groovy'
     }
 
     environment {
