@@ -47,8 +47,7 @@ pipeline {
                 }
             }
         }
-        stage('CI') {
-            parallel {
+        parallel {
                 stage('Lint') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
@@ -80,6 +79,8 @@ pipeline {
                     }
                 }
             }
-        }
+        // stage('CI') {
+            
+        // }
     }
 }
