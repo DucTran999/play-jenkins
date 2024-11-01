@@ -5,65 +5,38 @@ def installDependencies() {
 }
 
 def runLint() {
-    stage('Lint') {
-        when {
-            expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        }
-        steps {
-            script {
-                try {
-                    echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
-                    updateGitHubStatus(params.PENDING, 'CI/Lint')
-                    sh 'golangci-lint run .'
-                    updateGitHubStatus(params.SUCCESS, 'CI/Lint')
-                } catch (err) {
-                    updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                    error "Lint command failed: ${err.message}"
-                }
-            }
-        }
+    try {
+        echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
+        updateGitHubStatus(params.PENDING, 'CI/Lint')
+        sh 'golangci-lint run .'
+        updateGitHubStatus(params.SUCCESS, 'CI/Lint')
+    } catch (err) {
+        updateGitHubStatus(params.FAILURE, 'CI/Lint')
+        error "Lint command failed: ${err.message}"
     }
 }
 
 def runTests() {
-    stage('Test') {
-        when {
-            expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        }
-        steps {
-            script {
-                try {
-                    echo "Running tests on branch: ${env.BRANCH_NAME}"
-                    updateGitHubStatus(params.PENDING, 'CI/Test')
-                    sh 'go test ./calc/...'
-                    updateGitHubStatus(params.SUCCESS, 'CI/Test')
-                } catch (err) {
-                    updateGitHubStatus(params.FAILURE, 'CI/Test')
-                    error "Test command failed: ${err.message}"
-                }
-            }
-        }
+    try {
+        echo "Running tests on branch: ${env.BRANCH_NAME}"
+        updateGitHubStatus(params.PENDING, 'CI/Test')
+        sh 'make test'
+        updateGitHubStatus(params.SUCCESS, 'CI/Test')
+    } catch (err) {
+        updateGitHubStatus(params.FAILURE, 'CI/Test')
+        error "Test command failed: ${err.message}"
     }
 }
 
 def checkCoverage() {
-    stage('Coverage') {
-        when {
-            expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        }
-        steps {
-            script {
-                try {
-                    echo "Checking coverage on branch: ${env.BRANCH_NAME}"
-                    updateGitHubStatus(params.PENDING, 'CI/Coverage')
-                    sh 'make coverage'
-                    updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
-                } catch (err) {
-                    updateGitHubStatus(params.FAILURE, 'CI/Coverage')
-                    error "Coverage command failed: ${err.message}"
-                }
-            }
-        }
+    try {
+        echo "Checking coverage on branch: ${env.BRANCH_NAME}"
+        updateGitHubStatus(params.PENDING, 'CI/Coverage')
+        sh 'make coverage'
+        updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
+    } catch (err) {
+        updateGitHubStatus(params.FAILURE, 'CI/Coverage')
+        error "Coverage command failed: ${err.message}"
     }
 }
 

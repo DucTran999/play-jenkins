@@ -44,9 +44,36 @@ pipeline {
         }
         stage('CI') {
             parallel {
-                ciWorkflows.runLint()
-                ciWorkflows.runTests()
-                ciWorkflows.checkCoverage
+                stage('Lint') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            ciWorkflows.runLint()
+                        }
+                    }
+                }
+                stage('Test') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            ciWorkflows.runLint()
+                        }
+                    }
+                }
+                stage('Coverage') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            ciWorkflows.checkCoverage()
+                        }
+                    }
+                }
             }
         }
     }
