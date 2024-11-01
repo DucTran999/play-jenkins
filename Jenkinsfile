@@ -36,7 +36,7 @@ pipeline {
             }
             steps {
                 script {
-                    ciWorkflows = load './ci.groovy'
+                    ciWorkflows = load './script.groovy'
                     ciWorkflows.installDependencies()
                 }
             }
