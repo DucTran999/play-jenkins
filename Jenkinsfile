@@ -32,8 +32,7 @@ pipeline {
 
     stages {
         stage('CI') {
-            parallel {
-                stage('Lint') {
+                            stage('Lint') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
                     }
@@ -54,6 +53,7 @@ pipeline {
                         }
                     }
                 }
+            parallel {
                 stage('Test') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
