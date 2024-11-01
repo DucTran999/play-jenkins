@@ -1,2 +1,2 @@
 #!/bin/bash
-go test -v -race $(go list ./... | grep -E "calc")
+go test -race $(go list ./... | grep -E "calc")

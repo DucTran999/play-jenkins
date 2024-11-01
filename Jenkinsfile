@@ -71,6 +71,7 @@ pipeline {
                         script {
                             try {
                                 echo "Running tests on branch: ${env.BRANCH_NAME}"
+                                sh 'go mod tidy'
                                 updateGitHubStatus(params.PENDING, 'CI/Test')
                                 sh 'make test'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Test')
@@ -89,6 +90,7 @@ pipeline {
                         script {
                             try {
                                 echo "Checking coverage on branch: ${env.BRANCH_NAME}"
+                                sh 'go mod tidy'
                                 updateGitHubStatus(params.PENDING, 'CI/Coverage')
                                 sh 'make coverage'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
