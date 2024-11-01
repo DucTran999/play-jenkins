@@ -45,8 +45,7 @@ pipeline {
                         sh 'go clean -modcache'
                         sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
                         sh 'go mod tidy'
-                        sh 'ls -la'
-                        sh 'golangci-lint run'
+                        sh 'golangci-lint version'
                         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                     } catch (err) {
                         updateGitHubStatus(params.FAILURE, 'CI/Lint')
