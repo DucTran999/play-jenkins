@@ -1,4 +1,4 @@
-def ciWorkflows = load './ci.groovy'
+def ciWorkflows = load 'ci.groovy'
 
 pipeline {
     agent any
