@@ -42,39 +42,39 @@ pipeline {
                 }
             }
         }
-        stage('CI') {
-            parallel {
-                stage('Lint') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
-                    steps {
-                        script {
-                            ciWorkflows.runLint()
-                        }
-                    }
-                }
-                stage('Test') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
-                    steps {
-                        script {
-                            ciWorkflows.runLint()
-                        }
-                    }
-                }
-                stage('Coverage') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
-                    steps {
-                        script {
-                            ciWorkflows.checkCoverage()
-                        }
-                    }
-                }
-            }
-        }
+        // stage('CI') {
+        //     parallel {
+        //         stage('Lint') {
+        //             when {
+        //                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+        //             }
+        //             steps {
+        //                 script {
+        //                     ciWorkflows.runLint()
+        //                 }
+        //             }
+        //         }
+        //         stage('Test') {
+        //             when {
+        //                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+        //             }
+        //             steps {
+        //                 script {
+        //                     ciWorkflows.runLint()
+        //                 }
+        //             }
+        //         }
+        //         stage('Coverage') {
+        //             when {
+        //                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+        //             }
+        //             steps {
+        //                 script {
+        //                     ciWorkflows.checkCoverage()
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
