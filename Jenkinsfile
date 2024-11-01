@@ -1,5 +1,3 @@
-def ciWorkflows
-
 pipeline {
     agent any
 
@@ -32,21 +30,13 @@ pipeline {
     }
 
     stages {
-        stage('Load Scripts') {
-            steps {
-                script {
-                    node {
-                        ciWorkflows = load './ci.groovy'
-                    }
-                }
-            }
-        }
         stage('Install dependecies') {
             when {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
             }
             steps {
                 script {
+                    ciWorkflows = load './ci.groovy'
                     ciWorkflows.installDependencies()
                 }
             }

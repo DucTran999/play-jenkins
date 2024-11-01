@@ -5,7 +5,7 @@ def installDependencies() {
     //     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
     //     go mod tidy
     // '''
-    echo "ok"
+    echo 'ok'
 }
 
 def runLint() {
