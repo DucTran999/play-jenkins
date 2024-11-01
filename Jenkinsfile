@@ -63,6 +63,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        sh 'make --version'
                         echo "Running tests on branch: ${env.BRANCH_NAME}"
                         updateGitHubStatus(params.PENDING, 'CI/Test')
                         sh 'make test'
