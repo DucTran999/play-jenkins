@@ -71,7 +71,7 @@ pipeline {
                             try {
                                 echo "Running tests on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Test')
-                                sh 'go test ./calc/...'
+                                sh 'make test'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Test')
                             } catch (err) {
                                 updateGitHubStatus(params.FAILURE, 'CI/Test')
@@ -89,23 +89,7 @@ pipeline {
                             try {
                                 echo "Checking coverage on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Coverage')
-                                sh '''
-                                    mkdir -p coverage
-                                    go test -cover ./calc/...  -coverprofile=coverage/coverage.out
-                                    go tool cover -html=coverage/coverage.out -o coverage/coverage.html
-
-                                    # Enforce >60% coverage
-                                    total_coverage=$(go tool cover -func=coverage/coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
-                                    echo "Total coverage: $total_coverage%"
-                                    coverage_threshold=60.0
-                                    comparison=$(echo "$coverage >= $coverage_threshold" | bc -l)
-                                    # Check the result
-                                    if [ "$comparison" -eq 1 ]; then
-                                        echo "Code coverage $coverage% meets the threshold of $coverage_threshold%."
-                                    else
-                                        echo "Code coverage $coverage% does not meet the threshold of $coverage_threshold%."
-                                    fi
-                                '''
+                                sh 'make coverage'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
                             } catch (err) {
                                 updateGitHubStatus(params.FAILURE, 'CI/Coverage')

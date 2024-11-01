@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p coverage
-go test -cover $(go list ./... | grep calc)  -coverprofile=coverage/coverage.out
+go test -cover ./calc/...  -coverprofile=coverage/coverage.out
 go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 
 # Enforce >60% coverage
