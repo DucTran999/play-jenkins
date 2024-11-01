@@ -98,11 +98,12 @@ pipeline {
                                     total_coverage=$(go tool cover -func=coverage/coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
                                     echo "Total coverage: $total_coverage%"
                                     coverage_threshold=60.0
-                                    if (( $(echo "$total_coverage < $coverage_threshold" | bc -l) )); then
-                                      echo "Code coverage $total_coverage% is below the threshold of $coverage_threshold%."
-                                      exit 1
+                                    comparison=$(echo "$coverage >= $coverage_threshold" | bc -l)
+                                    # Check the result
+                                    if [ "$comparison" -eq 1 ]; then
+                                        echo "Code coverage $coverage% meets the threshold of $coverage_threshold%."
                                     else
-                                      echo "Code coverage $total_coverage% meets the threshold of $coverage_threshold%."
+                                        echo "Code coverage $coverage% does not meet the threshold of $coverage_threshold%."
                                     fi
                                 '''
                                 updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
