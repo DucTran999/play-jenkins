@@ -65,7 +65,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            ciWorkflows.runLint()
+                            ciWorkflows.runTests()
                         }
                     }
                 }
