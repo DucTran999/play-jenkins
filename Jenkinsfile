@@ -34,7 +34,6 @@ pipeline {
             steps {
                 script {
                     ciWorkflows = load './ci.groovy'
-                    ciWorkflows.updateGitHubStatus(params.PENDING, "")
                 }
             }
         }
@@ -49,31 +48,27 @@ pipeline {
             }
         }
         stage('CI') {
+            when {
+                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+            }
             parallel {
                 stage('Lint') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
                     steps {
                         script {
                             ciWorkflows.runLint()
                         }
                     }
                 }
+
                 stage('Test') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
                     steps {
                         script {
                             ciWorkflows.runTests()
                         }
                     }
                 }
+
                 stage('Coverage') {
-                    when {
-                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-                    }
                     steps {
                         script {
                             ciWorkflows.checkCoverage()
