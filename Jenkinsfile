@@ -44,7 +44,7 @@ pipeline {
         }
         stage('CI') {
             parallel {
-                   stage('Lint') {
+                stage('Lint') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
                     }
@@ -102,7 +102,6 @@ pipeline {
         }
     }
 }
-
 
 void updateGitHubStatus(String status, String context) {
     String curlCommand = '''
