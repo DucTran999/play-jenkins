@@ -29,32 +29,36 @@ pipeline {
     }
 
     stages {
+     pipeline {
+    agent any
+
+    stages {
         stage('CI') {
             when {
-                branch "feature/*"
+                expression {
+                    env.BRANCH_NAME ==~ /feature\/.*/
+                }
             }
-
-            stages{
-                steps {
-                    script{
-                        try {
-                            if (env.CHANGE_ID && env.CHANGE_TARGET == 'dev') {
+            steps {
+                script {
+                    try {
+                        if (env.CHANGE_ID && env.CHANGE_TARGET == 'dev') {
                             echo "Triggered by a Pull Request to 'dev' branch"
                             echo "Pull Request ID: ${env.CHANGE_ID}"
                             echo "Source Branch: ${env.BRANCH_NAME}"
-                            } else if (env.CHANGE_ID) {
-                                echo "Triggered by a Pull Request to a different branch (${env.CHANGE_TARGET})"
-                            } else {
-                                echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
-                            }
-                            updateGitHubStatus(params.PENDING, 'CI/Lint')
-                            sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
-                            sh 'golangci-lint run'
-                            updateGitHubStatus(params.SUCCESS, 'CI/Lint')
-                        } catch (err) {
-                            updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                            error "Shell command failed: ${err.message}"
+                        } else if (env.CHANGE_ID) {
+                            echo "Triggered by a Pull Request to a different branch (${env.CHANGE_TARGET})"
+                        } else {
+                            echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
                         }
+
+                        updateGitHubStatus(params.PENDING, 'CI/Lint')
+                        sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
+                        sh 'golangci-lint run'
+                        updateGitHubStatus(params.SUCCESS, 'CI/Lint')
+                    } catch (err) {
+                        updateGitHubStatus(params.FAILURE, 'CI/Lint')
+                        error "Shell command failed: ${err.message}"
                     }
                 }
             }
