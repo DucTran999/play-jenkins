@@ -39,8 +39,8 @@ pipeline {
                 script {
                     try {
                         echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
-                        sh 'go mod tidy'
                         updateGitHubStatus(params.PENDING, 'CI/Lint')
+                        sh 'go mod tidy'
                         sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
                         sh 'golangci-lint run'
                         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
