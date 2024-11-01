@@ -20,7 +20,7 @@ pipeline {
         
         GOPATH = "${env.WORKSPACE}/go"
         PATH = "${GOPATH}/bin:${env.PATH}" 
-        GO1231MODULE = 'on'
+        GO111MODULE=on
     }
 
     parameters {
