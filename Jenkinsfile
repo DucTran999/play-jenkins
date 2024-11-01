@@ -33,7 +33,11 @@ pipeline {
 
     stages {
         stage('Install dependecies') {
-           ciWorkflows.installDependencies()
+            steps {
+                script {
+                    ciWorkflows.installDependencies()
+                }
+            }
         }
         stage('CI') {
             parallel {
@@ -93,25 +97,5 @@ pipeline {
                 }
             }
         }
-    }
-}
-
-void updateGitHubStatus(String status, String context) {
-    String curlCommand = '''
-        curl --location "https://api.github.com/repos/DucTran999/play-jenkins/statuses/${COMMIT_HASH}" \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        -H "Content-Type: application/json" \
-        -d \'{"state": "'''+status+'''","context": "'''+context+'''","description":"build sucesstully"}\'\
-        --silent --output /dev/null --write-out "%{http_code}"
-    '''
-
-    String responseCode = sh(script: curlCommand, returnStdout: true).trim()
-
-    if (responseCode == '201') {
-        echo "Successfully updated GitHub status for commit ${env.COMMIT_HASH}"
-    } else {
-        error "Failed to update GitHub status: HTTP ${responseCode}"
     }
 }
