@@ -21,7 +21,6 @@ pipeline {
         GOPATH = "${env.WORKSPACE}/go"
         PATH = "${GOPATH}/bin:${env.PATH}" 
         GO114MODULE = 'on'
-        CGO_ENABLED = 0 
     }
 
     parameters {
