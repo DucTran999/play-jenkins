@@ -10,9 +10,12 @@ pipeline {
         githubPush()
     }
 
-    node {
-        def ciWorkflows = load 'ci.groovy'
+    agent{
+        node {
+            def ciWorkflows = load 'ci.groovy'
+        }
     }
+
 
     environment {
         GITHUB_TOKEN = credentials('playjenkins')
