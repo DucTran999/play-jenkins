@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     node {
-                        iWorkflows = load './ci.groovy'
+                        ciWorkflows = load './ci.groovy'
                     }
                 }
             }
