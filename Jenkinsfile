@@ -19,6 +19,7 @@ pipeline {
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
         
         GOPATH = "${env.WORKSPACE}/go"
+        CGO_ENABLED=1
         PATH = "${GOPATH}/bin:${env.PATH}" 
         GO114MODULE = 'on'
     }
