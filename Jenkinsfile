@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     ciWorkflows = load './ci.groovy'
-                    ciWorkflows.updateGitHubStatus(params.PENDING)
+                    ciWorkflows.updateGitHubStatus(params.PENDING, "")
                 }
             }
         }
