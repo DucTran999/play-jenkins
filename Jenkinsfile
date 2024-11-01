@@ -11,7 +11,6 @@ pipeline {
 
     environment {
         GITHUB_TOKEN = credentials('playjenkins')
-        GITHUB_REPO_URL = 'https://github.com/DucTran999/play-jenkins.git'
         GITHUB_REPO = 'DucTran999/play-jenkins'
 
         COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
@@ -73,6 +72,7 @@ pipeline {
                             try {
                                 echo "Running tests on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Test')
+                                sh 'ls -la calc'
                                 sh 'go test -race $(go list ./... | grep -E "calc")'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Test')
                             } catch (err) {
