@@ -32,7 +32,8 @@ pipeline {
 
     stages {
         stage('CI') {
-            when {
+            paralell{
+  when {
                 expression {
                     env.BRANCH_NAME ==~ /feature\/.*/
                 }
@@ -53,9 +54,11 @@ pipeline {
                     }
                 }
             }
+            }
         }
         stage('Test') {
-            when {
+            paralell{
+  when {
                 expression {
                     env.BRANCH_NAME ==~ /feature\/.*/
                 }
@@ -73,9 +76,11 @@ pipeline {
                     }
                 }
             }
+            }
         }
         stage('Coverage') {
-            when {
+            paralell{
+                when {
                 expression {
                     env.BRANCH_NAME ==~ /feature\/.*/
                 }
@@ -84,14 +89,15 @@ pipeline {
                 script {
                     try {
                         echo "Cheking coverage on branch: ${env.BRANCH_NAME}"
-                        updateGitHubStatus(params.PENDING, 'CI/Test')
+                        updateGitHubStatus(params.PENDING, 'CI/Coverage')
                         sh 'make coverage'
-                        updateGitHubStatus(params.SUCCESS, 'CI/Test')
+                        updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
                     } catch (err) {
-                        updateGitHubStatus(params.FAILURE, 'CI/Test')
+                        updateGitHubStatus(params.FAILURE, 'CI/Coverage')
                         error "Test command failed: ${err.message}"
                     }
                 }
+            }
             }
         }
     }
