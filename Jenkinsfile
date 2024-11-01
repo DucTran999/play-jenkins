@@ -72,8 +72,7 @@ pipeline {
                             try {
                                 echo "Running tests on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Test')
-                                sh 'ls -la calc'
-                                sh 'go test -race $(go list ./... | grep -E "calc")'
+                                sh 'make test'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Test')
                             } catch (err) {
                                 updateGitHubStatus(params.FAILURE, 'CI/Test')
