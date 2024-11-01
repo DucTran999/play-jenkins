@@ -29,10 +29,6 @@ pipeline {
     }
 
     stages {
-     pipeline {
-    agent any
-
-    stages {
         stage('CI') {
             when {
                 expression {
