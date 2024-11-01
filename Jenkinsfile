@@ -32,35 +32,10 @@ pipeline {
 
     stages {
         stage('CI') {
-            paralell {
+            parallel {
                 stage('Lint') {
                     when {
-                        expression {
-                            env.BRANCH_NAME ==~ /feature\/.*/
-                        }
-                    }
-                    steps {
-                        script {
-                            try {
-                                echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
-                                updateGitHubStatus(params.PENDING, 'CI/Lint')
-                                sh 'go clean -modcache'
-                                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
-                                sh 'go mod tidy'
-                                sh 'golangci-lint run .'
-                                updateGitHubStatus(params.SUCCESS, 'CI/Lint')
-                            } catch (err) {
-                                    updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                                    error "Shell command failed: ${err.message}"
-                                }
-                            }
-                    }
-                }
-                stage('Test') {
-                    {
-                        expression {
-                            env.BRANCH_NAME ==~ /feature\/.*/
-                        }
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
                     }
                     steps {
                         script {
@@ -74,27 +49,43 @@ pipeline {
                                 updateGitHubStatus(params.SUCCESS, 'CI/Lint')
                             } catch (err) {
                                 updateGitHubStatus(params.FAILURE, 'CI/Lint')
-                                error "Shell command failed: ${err.message}"
+                                error "Lint command failed: ${err.message}"
+                            }
+                        }
+                    }
+                }
+                stage('Test') {
+                    when {
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+                    }
+                    steps {
+                        script {
+                            try {
+                                echo "Running tests on branch: ${env.BRANCH_NAME}"
+                                updateGitHubStatus(params.PENDING, 'CI/Test')
+                                sh 'go test ./...'
+                                updateGitHubStatus(params.SUCCESS, 'CI/Test')
+                            } catch (err) {
+                                updateGitHubStatus(params.FAILURE, 'CI/Test')
+                                error "Test command failed: ${err.message}"
                             }
                         }
                     }
                 }
                 stage('Coverage') {
                     when {
-                        expression {
-                            env.BRANCH_NAME ==~ /feature\/.*/
-                        }
+                        expression { env.BRANCH_NAME ==~ /feature\/.*/ }
                     }
                     steps {
                         script {
                             try {
-                                echo "Cheking coverage on branch: ${env.BRANCH_NAME}"
+                                echo "Checking coverage on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Coverage')
                                 sh 'make coverage'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
-                        } catch (err) {
+                            } catch (err) {
                                 updateGitHubStatus(params.FAILURE, 'CI/Coverage')
-                                error "Test command failed: ${err.message}"
+                                error "Coverage command failed: ${err.message}"
                             }
                         }
                     }
@@ -103,6 +94,7 @@ pipeline {
         }
     }
 }
+
 
 void updateGitHubStatus(String status, String context) {
     String curlCommand = '''
