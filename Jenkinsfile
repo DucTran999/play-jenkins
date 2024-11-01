@@ -71,9 +71,9 @@ pipeline {
                         script {
                             try {
                                 echo "Running tests on branch: ${env.BRANCH_NAME}"
+                                updateGitHubStatus(params.PENDING, 'CI/Test')
                                 sh 'go clean -modcache'
                                 sh 'go mod tidy'
-                                updateGitHubStatus(params.PENDING, 'CI/Test')
                                 sh 'make test'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Test')
                             } catch (err) {
@@ -91,9 +91,9 @@ pipeline {
                         script {
                             try {
                                 echo "Checking coverage on branch: ${env.BRANCH_NAME}"
+                                updateGitHubStatus(params.PENDING, 'CI/Coverage')
                                 sh 'go clean -modecache'
                                 sh 'go mod tidy'
-                                updateGitHubStatus(params.PENDING, 'CI/Coverage')
                                 sh 'make coverage'
                                 updateGitHubStatus(params.SUCCESS, 'CI/Coverage')
                             } catch (err) {
