@@ -1,16 +1,7 @@
 def installDependencies() {
-    stage('Install dependencies') {
-        when {
-            expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-        }
-        steps {
-            script {
-                sh 'go clean -modcache'
-                sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
-                sh 'go mod tidy'
-            }
-        }
-    }
+    sh 'go clean -modcache'
+    sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
+    sh 'go mod tidy'
 }
 
 def runLint() {

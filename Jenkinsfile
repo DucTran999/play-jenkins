@@ -33,13 +33,20 @@ pipeline {
 
     stages {
         stage('Install dependecies') {
-            ciWorkflows.installDependencies()
+            when {
+                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+            }
+            steps {
+                script {
+                    ciWorkflows.installDependencies()
+                }
+            }
         }
         stage('CI') {
             parallel {
                 ciWorkflows.runLint()
                 ciWorkflows.runTests()
-                ciWorkflows.checkCoverage()
+                ciWorkflows.checkCoverage
             }
         }
     }
