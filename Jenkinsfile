@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-    // tools {
-    //     go '1.23.1'
-    // }
+    tools {
+        go '1.23.1'
+    }
 
     triggers {
         githubPush()
@@ -36,10 +36,6 @@ pipeline {
             }
             steps{
                 script{
-                    sh '''
-                    docker run --rm -v $PWD:/app -w /app golang:1.23.1 sh -c "
-                        go mod tidy && go test ./..."
-                    '''
                     sh 'go clean -modcache'
                     sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0'
                     sh 'go mod tidy'
