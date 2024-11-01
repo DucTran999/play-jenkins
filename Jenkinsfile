@@ -43,8 +43,8 @@ pipeline {
                 }
             }
         }
-        stage('CI') {
-            parallel {
+        // stage('CI') {
+        //     parallel {
                    stage('Lint') {
                     when {
                         expression { env.BRANCH_NAME ==~ /feature\/.*/ }
@@ -88,7 +88,6 @@ pipeline {
                     steps {
                         script {
                             try {
-                                sh 'go mod tidy'
                                 echo "Checking coverage on branch: ${env.BRANCH_NAME}"
                                 updateGitHubStatus(params.PENDING, 'CI/Coverage')
                                 sh 'make coverage'
@@ -100,8 +99,8 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
+            // }
+        // }
     }
 }
 
