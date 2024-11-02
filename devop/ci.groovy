@@ -9,7 +9,7 @@ def installDependencies() {
 def runLint() {
     try {
         echo "Triggered by a Push to branch: ${env.BRANCH_NAME}"
-        githubNotify status: 'PENDING', context: 'Build', description: 'Build in progress'
+        updateGitHubStatus(params.PENDING, 'CI/Lint')
         sh 'golangci-lint run .'
         updateGitHubStatus(params.SUCCESS, 'CI/Lint')
     } catch (err) {

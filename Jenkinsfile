@@ -30,28 +30,25 @@ pipeline {
     }
 
     stages {
-        stage('Load Scripts') {
-            steps {
-                script {
-                    ciWorkflows = load './devop/ci.groovy'
-                }
-            }
-        }
-        stage('Install dependecies') {
+        stage('ci') {
             when {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
             }
-            steps {
-                script {
-                    ciWorkflows.installDependencies()
+            stages {
+                stage('Install dependecies') {
+                    steps {
+                        script {
+                            ciWorkflows.installDependencies()
+                        }
+                    }
                 }
-            }
-        }
-        stage('CI') {
-            when {
-                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-            }
-            parallel {
+                stage('Load Scripts') {
+                    steps {
+                        script {
+                            ciWorkflows = load './devop/ci.groovy'
+                        }
+                    }
+                }
                 stage('Lint') {
                     steps {
                         script {
@@ -59,7 +56,6 @@ pipeline {
                         }
                     }
                 }
-
                 stage('Test') {
                     steps {
                         script {
@@ -67,7 +63,6 @@ pipeline {
                         }
                     }
                 }
-
                 stage('Coverage') {
                     steps {
                         script {
