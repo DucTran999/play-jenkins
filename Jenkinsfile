@@ -30,7 +30,7 @@ pipeline {
     }
 
     stages {
-        stage('ci') {
+        stage('CI') {
             when {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
             }
