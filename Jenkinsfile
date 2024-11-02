@@ -33,7 +33,7 @@ pipeline {
         stage('Load Scripts') {
             steps {
                 script {
-                    ciWorkflows = load './ci.groovy'
+                    ciWorkflows = load './devop/ci.groovy'
                 }
             }
         }
