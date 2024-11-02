@@ -35,17 +35,17 @@ pipeline {
                 expression { env.BRANCH_NAME ==~ /feature\/.*/ }
             }
             stages {
-                stage('Install dependecies') {
-                    steps {
-                        script {
-                            ciWorkflows.installDependencies()
-                        }
-                    }
-                }
                 stage('Load Scripts') {
                     steps {
                         script {
                             ciWorkflows = load './devop/ci.groovy'
+                        }
+                    }
+                }
+                stage('Install dependecies') {
+                    steps {
+                        script {
+                            ciWorkflows.installDependencies()
                         }
                     }
                 }
