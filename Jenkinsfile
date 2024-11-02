@@ -37,9 +37,9 @@ pipeline {
             steps {
                 script {
                     ci = load "./devop/ci.groovy"
-                    ci.startCI()
                 }
             }
+            ci.startCI()
         }
     }
 }
