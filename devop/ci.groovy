@@ -1,3 +1,36 @@
+def startCI() {
+    stages {
+        stage('Install dependecies') {
+            steps {
+                script {
+                    installDependencies()
+                }
+            }
+        }
+        stage('Lint') {
+            steps {
+                script {
+                    runLint()
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    runTests()
+                }
+            }
+        }
+        stage('Coverage') {
+            steps {
+                script {
+                    checkCoverage()
+                }
+            }
+        }
+    }
+}        
+    
 def installDependencies() {
     sh '''
         go clean -modcache
