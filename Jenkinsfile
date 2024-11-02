@@ -30,9 +30,47 @@ pipeline {
     }
 
     stages {
-        stage('Load script') {
-            ci = load './devop/ci.groovy'
+        stage('ci') {
+            when {
+                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+            }
+            stages {
+                stage('Load Scripts') {
+                    steps {
+                        script {
+                            ciWorkflows = load './devop/ci.groovy'
+                        }
+                    }
+                }
+                stage('Install dependecies') {
+                    steps {
+                        script {
+                            ciWorkflows.installDependencies()
+                        }
+                    }
+                }
+                stage('Lint') {
+                    steps {
+                        script {
+                            ciWorkflows.runLint()
+                        }
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        script {
+                            ciWorkflows.runTests()
+                        }
+                    }
+                }
+                stage('Coverage') {
+                    steps {
+                        script {
+                            ciWorkflows.checkCoverage()
+                        }
+                    }
+                }
+            }
         }
-        ci.startCI()
     }
 }
