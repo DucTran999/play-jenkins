@@ -1,30 +1,35 @@
 def startCI() {
-    stages {
-        stage('Install dependecies') {
-            steps {
-                script {
-                    installDependencies()
+    stage('CI') {
+        when {
+            expression { env.BRANCH_NAME ==~ /feature\/.*/ }
+        }
+        stages {
+            stage('Install dependecies') {
+                steps {
+                    script {
+                        installDependencies()
+                    }
                 }
             }
-        }
-        stage('Lint') {
-            steps {
-                script {
-                    runLint()
+            stage('Lint') {
+                steps {
+                    script {
+                        runLint()
+                    }
                 }
             }
-        }
-        stage('Test') {
-            steps {
-                script {
-                    runTests()
+            stage('Test') {
+                steps {
+                    script {
+                        runTests()
+                    }
                 }
             }
-        }
-        stage('Coverage') {
-            steps {
-                script {
-                    checkCoverage()
+            stage('Coverage') {
+                steps {
+                    script {
+                        checkCoverage()
+                    }
                 }
             }
         }

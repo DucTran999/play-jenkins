@@ -30,16 +30,9 @@ pipeline {
     }
 
     stages {
-        stage('CI') {
-            when {
-                expression { env.BRANCH_NAME ==~ /feature\/.*/ }
-            }
-            steps {
-                script {
-                    ci = load "./devop/ci.groovy"
-                }
-            }
-            ci.startCI()
+        stage('Load script') {
+            ci = load './devop/ci.groovy'
         }
+        ci.startCI()
     }
 }
